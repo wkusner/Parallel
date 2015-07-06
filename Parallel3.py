@@ -10,18 +10,20 @@ __author__ = 'bozo'
 
 import numpy as np
 from joblib import Parallel, delayed
+import multiprocessing
 
 ################################################################################
 ################################################################################
 ################################################################################
 
+maxcores = multiprocessing.cpu_count()
 
-q1 = raw_input("random or .csv? r/c:")
+q1 = raw_input("random or .csv?(r/c):")
 put = 1
 while put == 1:
     if q1 == "r":
-        N = int(raw_input("integer number of random points:") or 42)
-        seed = int(raw_input("integer random seed:") or 342343423)
+        N = int(raw_input("integer number of random points (default 42):") or 42)
+        seed = int(raw_input("integer random seed (default 342343423):") or 342343423)
 
         def points(N):
             np.random.seed(seed)
@@ -49,9 +51,10 @@ while put == 1:
         put = 0
 
     else:
-        q1 = raw_input("random or .csv? r/c:")
+		q1 = "r"
+        #q1 = raw_input("random or .csv? (r/c):")
 
-#cores = raw_input("cores to run (choose 1 for non-parallel, 2-4 for parallel):")
+cores = int(raw_input("Cores to run. Choose 1 for non-parallel, 2 to %d(default) for parallel:" % maxcores) or maxcores) 
 
 ################################################################################
 ################################################################################
@@ -59,38 +62,26 @@ while put == 1:
 
 def NMSQ(u):
     return np.dot(u, u)
-
-
 # norm squared of u
 
 def NM(u):
     return np.sqrt(np.dot(u, u))
-
-
 # norm of u
 
 def CRS(u, v):
     return [u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - v[0] * u[1]]
-
-
 # cross product of u and v
 
 def VNMal(u, v, w):
     return CRS(u - w, v - w) / NM(CRS(u - w, v - w))
-
-
 # the center of a three point cap
 
 def LNMal(u, v):
         return (u + v) / NM(u + v)
-
-
 # the center of a two point cap
 
 def len(u):
     return np.size(u, 0)
-
-
 # length of a string of points
 
 ################################################################################
@@ -325,9 +316,26 @@ def FULLDISCREPANCYIT(i):
     return hold
 
 def PARALLEL(u):
-    return np.max(Parallel(n_jobs=2)(delayed(FULLDISCREPANCYIT)(i) for i in range(len(u) - 2)))
+	return np.max(Parallel(n_jobs=cores)(delayed(FULLDISCREPANCYIT)(i) for i in range(len(u) - 2)))
 
 
 
 
-print PARALLEL(Z)
+
+def SD(u):
+	global cores
+	print ("Discrepancy of your choice of %s points:") % len(u)
+	print ("Running on %d cpus.") % cores
+	if cores==1:
+		print FULLDISCREPANCYLOOP(u)
+	elif 1<cores <= maxcores:
+		print PARALLEL(u)
+	else:
+		print "Not enough cores!"
+		cores = maxcores
+		print ("Running on %d cores.") % cores
+		print PARALLEL(u)
+		
+
+SD(Z)
+		
