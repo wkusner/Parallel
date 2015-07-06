@@ -54,7 +54,7 @@ while put == 1:
 		q1 = "r"
         #q1 = raw_input("random or .csv? (r/c):")
 
-cores = int(raw_input("Cores to run. Choose 1 for non-parallel (shows maximal circle), 2 to %d(default) for parallel:" % maxcores) or maxcores)
+cores = int(raw_input("Cores to run. Choose 1 for non-parallel, 2 to %d(default) for parallel:" % maxcores) or maxcores) 
 
 ################################################################################
 ################################################################################
@@ -90,8 +90,6 @@ def len(u):
 
 
 def FULLDISCREPANCYLOOP(u):
-    vec = [0,0,0]
-    area = 0
     hold = 0
     for i in range(0, len(u) - 2):
         for j in range(i + 1, len(u) - 1):
@@ -118,8 +116,6 @@ def FULLDISCREPANCYLOOP(u):
                 y1s = (1 - np.dot(LNMal(u[i], u[j]), u[i])) / 2
                 if np.absolute(y1d - y1s) > hold:
                     hold = np.absolute(y1d - y1s)
-                    vec = [u[i],u[j]]
-                    area = y1s
                 else:
                     hold = hold
 
@@ -127,8 +123,6 @@ def FULLDISCREPANCYLOOP(u):
                 y2s = (1 - np.dot(LNMal(u[i], u[j]), u[i])) / 2
                 if np.absolute(y2d - y2s) > hold:
                     hold = np.absolute(y2d - y2s)
-                    vec = [u[i],u[j]]
-                    area = y2s
                 else:
                     hold = hold
 
@@ -144,8 +138,6 @@ def FULLDISCREPANCYLOOP(u):
                     y3s = (1 - np.dot(VNMal(u[i], u[j], u[k]), u[i])) / 2
                     if np.absolute(y3d - y3s) > hold:
                         hold = np.absolute(y3d - y3s)
-                        vec = [u[i],u[j],u[k]]
-                        area = y3s
                     else:
                      hold = hold
 
@@ -160,12 +152,9 @@ def FULLDISCREPANCYLOOP(u):
                     y4s = (1 - np.dot(VNMal(u[i], u[j], u[k]), u[i])) / 2
                     if np.absolute(y4d - y4s) > hold:
                         hold = np.absolute(y4d - y4s)
-                        vec = [u[i],u[j],u[k]]
-                        area = y4s
                     else:
                         hold = hold
-    return [hold, area, np.array(vec)]
-
+    return hold
 
 
 
@@ -244,7 +233,6 @@ def FULLDISCREPANCYITERATOR(i):
             else:
                 hold = hold
     return hold
-
 
 
 def PARALLELDISCREPANCY(u):
