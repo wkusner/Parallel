@@ -330,6 +330,9 @@ def FULLDISCREPANCYIT(i):
 def PARALLEL(u):
 	return np.max(Parallel(n_jobs=cores)(delayed(FULLDISCREPANCYIT)(i) for i in range(len(u) - 2)))
 
+#to get the vector elements use something Parallel(n_jobs=cores)(delayed(FULLDISCREPANCYIT)(i) for i in range(len(u) - 2)).max(axis=0)
+#set up an nxn grid that tracks volume of both types and the number inside, there are curves of fixed discrepancy of discrepancy
+#
 
 
 
